@@ -625,19 +625,19 @@
 
   - [6.2](#strings--line-length) 超过 100 个字符的字符串不应该用字符串连接成多行。
 
-> 为什么？字符串折行增加编写难度且不易被搜索。
+    > 为什么？字符串折行增加编写难度且不易被搜索。
 
     ```javascript
     // bad
     const errorMessage = 'This is a super long error that was thrown because \
-    of Batman. When you stop to think about how Batman had anything to do \
-    with this, you would get nowhere \
-fast.';
+        of Batman. When you stop to think about how Batman had anything to do \
+        with this, you would get nowhere \
+    fast.';
 
     // bad
     const errorMessage = 'This is a super long error that was thrown because ' +
-      'of Batman. When you stop to think about how Batman had anything to do ' +
-  'with this, you would get nowhere fast.';
+        'of Batman. When you stop to think about how Batman had anything to do ' +
+    'with this, you would get nowhere fast.';
 
     // good
     const errorMessage = 'This is a super long error that was thrown because of Batman. When you stop to think about how Batman had anything to do with this, you would get nowhere fast.';
@@ -706,30 +706,30 @@ fast.';
 
     > 函数表达式： const func = function () {}
 
-    > 函数声明： function func() {}
+    > 函数声明： function func () {}
 
     > 为什么？函数声明会发生提升，这意味着在一个文件里函数很容易在其被定义之前就被引用了。这样伤害了代码可读性和可维护性。如果你发现一个函数又大又复杂，且这个函数妨碍了这个文件其他部分的理解性，你应当单独把这个函数提取成一个单独的模块。不管这个名字是不是由一个确定的变量推断出来的，别忘了给表达式清晰的命名（这在现代浏览器和类似 babel 编译器中很常见）。这消除了由匿名函数在错误调用栈产生的所有假设。 ([讨论](https://github.com/airbnb/javascript/issues/794))
->
-    > 译者注：这一段可能不是很好理解，简单来说就是使用函数声明会发生提升（即在函数被声明之前就可以使用），使用匿名函数会导致难以追踪错误。[这一段英文原文在这](https://github.com/airbnb/javascript#functions)。
 
-```javascript
+      > 译者注：这一段可能不是很好理解，简单来说就是使用函数声明会发生提升（即在函数被声明之前就可以使用），使用匿名函数会导致难以追踪错误。[这一段英文原文在这](https://github.com/airbnb/javascript#functions)。
+
+    ```javascript
     // bad
     function foo() {
       // ...
     }
 
-// bad
+    // bad
     const foo = function () {
       // ...
     };
 
-// good
+    // good
     // lexical name distinguished from the variable-referenced invocation(s)
     // 函数表达式名和声明的函数名是不一样的
     const short = function longUniqueMoreDescriptiveLexicalFoo() {
       // ...
     };
-```
+    ```
 
   <a name="7.2"></a>
   <a name="functions--iife"></a>
@@ -754,7 +754,7 @@ fast.';
   <a name="7.4"></a>
   <a name="functions--note-on-blocks"></a>
 
-  - [7.4](#functions--note-on-blocks) **注意：**ECMA-262 中对块（`block`）的定义是： 一系列的语句。但是函数声明不是一个语句， 函数表达式是一个语句。
+  - [7.4](#functions--note-on-blocks) **注意**：ECMA-262 中对块（`block`）的定义是： 一系列的语句。但是函数声明不是一个语句， 函数表达式是一个语句。
 
     ```javascript
     // bad
@@ -1077,9 +1077,8 @@ fast.';
     // bad
     foo(() => bool = true);
 
-    ```
 
-// good
+    // good
     foo(() => {
       bool = true;
     });
@@ -1133,9 +1132,8 @@ fast.';
       `A long string with the ${number}. It’s so long that we don’t want it to take up space on the .map line!`
     ));
 
-    ```
 
-// bad
+    // bad
     [1, 2, 3].map(x => {
       const y = x + 1;
       return x * y;
@@ -1212,9 +1210,7 @@ fast.';
       this.queue.splice(0, 1);
       return value;
     };
-    ```
-
-
+    
     // good
     class Queue {
       constructor(contents = []) {
@@ -1504,15 +1500,15 @@ fast.';
 
   - [10.6](#modules--prefer-default-export) 在一个单一导出模块里，用 `export default` 更好。eslint: [`import/prefer-default-export`](https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/prefer-default-export.md)
 
-> 为什么？鼓励使用更多文件，每个文件只导出一次，这样可读性和可维护性更好。
+    > 为什么？鼓励使用更多文件，每个文件只导出一次，这样可读性和可维护性更好。
 
-```javascript
+    ```javascript
     // bad
     export function foo() {}
 
-// good
+    // good
     export default function foo() {}
-```
+    ```
 
   <a name="10.7"></a>
   <a name="modules--imports-first"></a>
