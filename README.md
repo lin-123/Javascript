@@ -318,10 +318,10 @@
 
     // best
     const has = Object.prototype.hasOwnProperty; // 在模块作用域内做一次缓存。
+    console.log(has.call(object, key));
     /* or */
     import has from 'has'; // https://www.npmjs.com/package/has
-    // ...
-    console.log(has.call(object, key));
+    console.log(has(object, key));
     ```
 
   <a name="3.8"></a>
