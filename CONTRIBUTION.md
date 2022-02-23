@@ -11,3 +11,9 @@
 
 - 有个干净的分支，跟踪线上的更新
 - 根据更新来翻译对应内容
+
+创建一个 follow 分支， 用于跟踪 upstream
+
+1. git branch master 用于跟踪upstream
+2. git diff master upstream/master README.md  对比文件差异
+3. 修改 cn 分支下 README.md
