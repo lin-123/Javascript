@@ -3326,7 +3326,7 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
     // good
     const luke = {};
     const leia = {};
-        [luke, leia].forEach((jedi) => {
+    [luke, leia].forEach((jedi) => {
       jedi.father = 'vader';
     });
 
