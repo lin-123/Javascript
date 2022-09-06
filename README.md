@@ -146,17 +146,21 @@
 
   <a name="2.3"></a>
   <a name="references--block-scope"></a>
-  - [2.3](#references--block-scope) 注意：`let` 和 `const` 都是块级作用域。
+  - [2.3](#references--block-scope) 注意：`let` 和 `const` 都是块级作用域， 而 `var` 是函数级作用域
 
     ```javascript
     // const 和 let 都只存在于它被定义的那个块级作用域。
     {
       let a = 1;
       const b = 1;
+      var c = 1;
     }
-    console.log(a); // ReferenceError
-    console.log(b); // ReferenceError
+    console.log(a); // 引用错误
+    console.log(b); // 引用错误
+    console.log(c); // 打印 1
     ```
+
+    上面的代码里，`a` 和 `b` 的定义会报引用错误，这是因为 `a` 和 `b` 是块级作用域， 而 `c` 的作用域是在函数里的。
 
 **[⬆ 返回顶部](#目录)**
 
@@ -232,7 +236,7 @@
   <a name="es6-object-concise"></a>
   - [3.4](#es6-object-concise) 用属性值缩写。eslint: [`object-shorthand`](http://eslint.org/docs/rules/object-shorthand.html)
 
-    > 为什么？因为这样写的更少且可读性更高。
+    > 为什么？这样写更简洁，且可读性更高。
 
     ```javascript
     const lukeSkywalker = 'Luke Skywalker';
@@ -305,7 +309,8 @@
 
   <a name="3.7"></a>
   <a name="objects--prototype-builtins"></a>
-  - [3.7](#objects--prototype-builtins) 不要直接调用 `Object.prototype`上的方法，如 `hasOwnProperty`、`propertyIsEnumerable`、`isPrototypeOf`。
+  - [3.7](#objects--prototype-builtins) 不要直接调用 `Object.prototype`上的方法，如 `hasOwnProperty`、`propertyIsEnumerable`、`isPrototypeOf`。eslint: [`no-prototype-builtins`](htt
+ps://eslint.org/docs/rules/no-prototype-builtins)
 
     > 为什么？在一些有问题的对象上，这些方法可能会被屏蔽掉，如：`{ hasOwnProperty: false }` 或空对象 `Object.create(null)`
 
@@ -318,10 +323,10 @@
 
     // best
     const has = Object.prototype.hasOwnProperty; // 在模块作用域内做一次缓存。
+    console.log(has.call(object, key));
     /* or */
     import has from 'has'; // https://www.npmjs.com/package/has
-    // ...
-    console.log(has.call(object, key));
+    console.log(has(object, key));
     ```
 
   <a name="3.8"></a>
@@ -333,7 +338,7 @@
   ```javascript
   // very bad
   const original = { a: 1, b: 2 };
-  const copy = Object.assign(original, { c: 3 }); // this mutates `original` ಠ_ಠ
+  const copy = Object.assign(original, { c: 3 }); // 改了 `original` ಠ_ಠ
   delete copy.a; // so does this
 
   // bad
@@ -398,8 +403,8 @@
     const itemsCopy = [...items];
     ```
 
-  <a name="4.4"></a>
-  <a name="arrays--from-iterable"></a>
+  <a name="arrays--from"></a>
+  <a name="arrays--from-iterable"></a><a name="4.4"></a>
 
   - [4.4](#arrays--from-iterable) 用 `...` 运算符而不是 [`Array.from`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/from) 来将一个可迭代的对象转换成数组。
 
@@ -413,9 +418,7 @@
     const nodes = [...foo];
     ```
 
-  <a name="4.5"></a>
   <a name="arrays--from-array-like"></a>
-
   - [4.5](#arrays--from-array-like) 用 [`Array.from`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/from) 将一个类数组对象转成一个数组。
 
     ```javascript
@@ -454,18 +457,16 @@
     });
 
     // good 函数只有一个语句
-    [1, 2, 3].map(x => x + 1);
+    [1, 2, 3].map((x) => x + 1);
 
     // bad - 没有返回值， 因为在第一次迭代后 acc 就变成 undefined 了
     [[0, 1], [2, 3], [4, 5]].reduce((acc, item, index) => {
       const flatten = acc.concat(item);
-      acc[index] = flatten;
     });
 
     // good
     [[0, 1], [2, 3], [4, 5]].reduce((acc, item, index) => {
       const flatten = acc.concat(item);
-      acc[index] = flatten;
       return flatten;
     });
 
@@ -536,7 +537,7 @@
   <a name="destructuring--object"></a>
   - [5.1](#destructuring--object) 用对象的解构赋值来获取和使用对象某个或多个属性值。eslint: [`prefer-destructuring`](https://eslint.org/docs/rules/prefer-destructuring)
 
-    > 为什么？解构使您不必为这些属性创建临时引用，并且避免重复引用对象。重复引用对象将造成代码重复、增加阅读次数、提高犯错概率。Destructuring objects also provides a single site of definition of the  object structure that is used in the block, rather than requiring  reading the entire block to determine what is used.
+    > 为什么？ 解构使您不必为这些属性创建临时引用，并且避免重复引用对象。重复引用对象将造成代码重复、增加阅读次数、提高犯错概率。在一个块级作用域里，解构对象可以在同一个地方给解构字段赋值，而不需要读整个的代码块看它到底用了哪些字段。
 
     ```javascript
     // bad
@@ -625,19 +626,19 @@
 
   - [6.2](#strings--line-length) 超过 100 个字符的字符串不应该用字符串连接成多行。
 
-> 为什么？字符串折行增加编写难度且不易被搜索。
+    > 为什么？字符串折行增加编写难度且不易被搜索。
 
     ```javascript
     // bad
     const errorMessage = 'This is a super long error that was thrown because \
-    of Batman. When you stop to think about how Batman had anything to do \
-    with this, you would get nowhere \
-fast.';
+        of Batman. When you stop to think about how Batman had anything to do \
+        with this, you would get nowhere \
+    fast.';
 
     // bad
     const errorMessage = 'This is a super long error that was thrown because ' +
-      'of Batman. When you stop to think about how Batman had anything to do ' +
-  'with this, you would get nowhere fast.';
+        'of Batman. When you stop to think about how Batman had anything to do ' +
+    'with this, you would get nowhere fast.';
 
     // good
     const errorMessage = 'This is a super long error that was thrown because of Batman. When you stop to think about how Batman had anything to do with this, you would get nowhere fast.';
@@ -674,7 +675,7 @@ fast.';
   <a name="6.4"></a>
   <a name="strings--eval"></a>
 
-  - [6.4](#strings--eval) 永远使用 `eval()`，该方法有太多漏洞。eslint: [`no-eval`](https://eslint.org/docs/rules/no-eval)
+  - [6.4](#strings--eval) 永远不要使用 `eval()`，该方法有太多漏洞。eslint: [`no-eval`](https://eslint.org/docs/rules/no-eval)
 
   <a name="6.5"></a>
   <a name="strings--escaping"></a>
@@ -706,30 +707,30 @@ fast.';
 
     > 函数表达式： const func = function () {}
 
-    > 函数声明： function func() {}
+    > 函数声明： function func () {}
 
     > 为什么？函数声明会发生提升，这意味着在一个文件里函数很容易在其被定义之前就被引用了。这样伤害了代码可读性和可维护性。如果你发现一个函数又大又复杂，且这个函数妨碍了这个文件其他部分的理解性，你应当单独把这个函数提取成一个单独的模块。不管这个名字是不是由一个确定的变量推断出来的，别忘了给表达式清晰的命名（这在现代浏览器和类似 babel 编译器中很常见）。这消除了由匿名函数在错误调用栈产生的所有假设。 ([讨论](https://github.com/airbnb/javascript/issues/794))
->
-    > 译者注：这一段可能不是很好理解，简单来说就是使用函数声明会发生提升（即在函数被声明之前就可以使用），使用匿名函数会导致难以追踪错误。[这一段英文原文在这](https://github.com/airbnb/javascript#functions)。
 
-```javascript
+      > 译者注：这一段可能不是很好理解，简单来说就是使用函数声明会发生提升（即在函数被声明之前就可以使用），使用匿名函数会导致难以追踪错误。[这一段英文原文在这](https://github.com/airbnb/javascript#functions)。
+
+    ```javascript
     // bad
     function foo() {
       // ...
     }
 
-// bad
+    // bad
     const foo = function () {
       // ...
     };
 
-// good
+    // good
     // lexical name distinguished from the variable-referenced invocation(s)
     // 函数表达式名和声明的函数名是不一样的
     const short = function longUniqueMoreDescriptiveLexicalFoo() {
       // ...
     };
-```
+    ```
 
   <a name="7.2"></a>
   <a name="functions--iife"></a>
@@ -754,7 +755,7 @@ fast.';
   <a name="7.4"></a>
   <a name="functions--note-on-blocks"></a>
 
-  - [7.4](#functions--note-on-blocks) **注意：**ECMA-262 中对块（`block`）的定义是： 一系列的语句。但是函数声明不是一个语句， 函数表达式是一个语句。
+  - [7.4](#functions--note-on-blocks) **注意**：ECMA-262 中对块（`block`）的定义是： 一系列的语句。但是函数声明不是一个语句， 函数表达式是一个语句。
 
     ```javascript
     // bad
@@ -1077,9 +1078,8 @@ fast.';
     // bad
     foo(() => bool = true);
 
-    ```
 
-// good
+    // good
     foo(() => {
       bool = true;
     });
@@ -1094,14 +1094,14 @@ fast.';
 
     ```js
     // bad
-    ['get', 'post', 'put'].map(httpMethod => Object.prototype.hasOwnProperty.call(
+    ['get', 'post', 'put'].map((httpMethod) => Object.prototype.hasOwnProperty.call(
         httpMagicObjectWithAVeryLongName,
         httpMethod
       )
     );
 
     // good
-    ['get', 'post', 'put'].map(httpMethod => (
+    ['get', 'post', 'put'].map((httpMethod) => (
       Object.prototype.hasOwnProperty.call(
         httpMagicObjectWithAVeryLongName,
         httpMethod
@@ -1114,7 +1114,7 @@ fast.';
 
   - [8.4](#arrows--one-arg-parens) 在箭头函数参数两头，总是使用小括号包裹住参数，这样做使代码更清晰且一致. eslint: [`arrow-parens`](https://eslint.org/docs/rules/arrow-parens.html)
 
-    > 为什么？当你想要添加或删除参数时能比较省事。
+    > 为什么？当你想要添加或删除参数时改动最小。
 
     ```js
     // bad
@@ -1133,9 +1133,8 @@ fast.';
       `A long string with the ${number}. It’s so long that we don’t want it to take up space on the .map line!`
     ));
 
-    ```
 
-// bad
+    // bad
     [1, 2, 3].map(x => {
       const y = x + 1;
       return x * y;
@@ -1212,8 +1211,6 @@ fast.';
       this.queue.splice(0, 1);
       return value;
     };
-    ```
-
 
     // good
     class Queue {
@@ -1504,15 +1501,15 @@ fast.';
 
   - [10.6](#modules--prefer-default-export) 在一个单一导出模块里，用 `export default` 更好。eslint: [`import/prefer-default-export`](https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/prefer-default-export.md)
 
-> 为什么？鼓励使用更多文件，每个文件只导出一次，这样可读性和可维护性更好。
+    > 为什么？鼓励使用更多文件，每个文件只导出一次，这样可读性和可维护性更好。
 
-```javascript
+    ```javascript
     // bad
     export function foo() {}
 
-// good
+    // good
     export default function foo() {}
-```
+    ```
 
   <a name="10.7"></a>
   <a name="modules--imports-first"></a>
@@ -1537,7 +1534,7 @@ fast.';
 
   <a name="10.8"></a>
   <a name="modules--multiline-imports-over-newlines"></a>
-  - [10.8](#modules--multiline-imports-over-newlines) 多行 `import` 应该缩进，就像多行数组和对象字面量一样。
+  - [10.8](#modules--multiline-imports-over-newlines) 多行 `import` 应该缩进，就像多行数组和对象字面量一样。eslint: [`object-curly-newline`](https://eslint.org/docs/rules/object-curly-newline)
 
     > 为什么？花括号与样式指南中每个其他花括号块遵循相同的缩进规则，逗号也是。
 
@@ -1571,6 +1568,24 @@ fast.';
     import barCss from 'bar.css';
     ```
 
+  <a name="10.10"></a>
+  <a name="modules--import-extensions"></a>
+  - [10.10](#modules--import-extensions) import JavaScript文件不用包含扩展名
+ eslint: [`import/extensions`](https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/extensions.md)
+    > 为什么? 使用扩展名重构不友好，而且让模块使用者去了解模块的实现细节是不合适的。
+
+    ```javascript
+    // bad
+    import foo from './foo.js';
+    import bar from './bar.jsx';
+    import baz from './baz/index.jsx';
+
+    // good
+    import foo from './foo';
+    import bar from './bar';
+    import baz from './baz';
+    ```
+
 **[⬆ 返回顶部](#目录)**
 
 ## 迭代器与生成器
@@ -1595,7 +1610,7 @@ fast.';
 
     // good
     let sum = 0;
-    numbers.forEach(num => sum += num);
+    numbers.forEach((num) => sum += num);
     sum === 15;
 
     // best (use the functional force)
@@ -1608,12 +1623,14 @@ fast.';
       increasedByOne.push(numbers[i] + 1);
     }
 
-    // good
+        // good
     const increasedByOne = [];
-    numbers.forEach(num => increasedByOne.push(num + 1));
+    numbers.forEach((num) => {
+      increasedByOne.push(num + 1);
+    });
 
     // best (keeping it functional)
-    const increasedByOne = numbers.map(num => num + 1);
+    const increasedByOne = numbers.map((num) => num + 1);
     ```
 
   <a name="11.2"></a>
@@ -1991,7 +2008,7 @@ fast.';
   <a name="14.1"></a>
   <a name="hoisting--about"></a>
 
-  - [14.1](#hoisting--about) `var` 声明会被提前到离他最近的作用域的最前面，但是它的赋值语句并没有提前。`const` 和 `let` 被赋予了新的概念 [暂时性死区](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let#Temporal_dead_zone_and_errors_with_let)。 重要的是要知道为什么 [typeof 不再安全](http://es-discourse.com/t/why-typeof-is-no-longer-safe/15).
+  - [14.1](#hoisting--about) `var` 声明会被提前到离他最近的作用域的最前面，但是它的赋值语句并没有提前。`const` 和 `let` 被赋予了新的概念 [暂时性死区 (TDZ)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let#temporal_dead_zone_tdz)。 重要的是要知道为什么 [typeof 不再安全](https://web.archive.org/web/20200121061528/http://es-discourse.com/t/why-typeof-is-no-longer-safe/15)。
 
     ```javascript
     // 我们知道这个不会工作，假设没有定义全局的 notDefined
@@ -2214,44 +2231,43 @@ fast.';
   - [15.6](#comparison--nested-ternaries) 三元表达式不应该嵌套，通常是单行表达式。eslint rules: [`no-nested-ternary`](http://eslint.org/docs/rules/no-nested-ternary.html)
 
     ```javascript
-// bad
+    // bad
     const foo = maybe1 > maybe2
       ? "bar"
       : value1 > value2 ? "baz" : null;
 
     // better
-const maybeNull = value1 > value2 ? 'baz' : null;
+    const maybeNull = value1 > value2 ? 'baz' : null;
 
     const foo = maybe1 > maybe2
     ? 'bar'
       : maybeNull;
 
     // best
-const maybeNull = value1 > value2 ? 'baz' : null;
+    const maybeNull = value1 > value2 ? 'baz' : null;
 
     const foo = maybe1 > maybe2 ? 'bar' : maybeNull;
     ```
-```
 
   <a name="15.7"></a>
   <a name="comparison--unneeded-ternary"></a>
   - [15.7](#comparison--unneeded-ternary) 避免不必要的三元表达式。eslint rules: [`no-unneeded-ternary`](http://eslint.org/docs/rules/no-unneeded-ternary.html)
 
     ```javascript
-// bad
+    // bad
     const foo = a ? a : b;
     const bar = c ? true : false;
     const baz = c ? false : true;
 
     // good
-const foo = a || b;
+    const foo = a || b;
     const bar = !!c;
     const baz = !c;
-```
+    ```
 
   <a name="15.8"></a>
   <a name="comparison--no-mixed-operators"></a>
-  - [15.8](#comparison--no-mixed-operators) 用圆括号来组合操作符。 只有当标准的算术运算符（`+`, `-`, `*`, 和 `/`）， 并且它们的优先级显而易见时，才可以不用圆括号括起来。eslint: [`no-mixed-operators`](https://eslint.org/docs/rules/no-mixed-operators.html)
+  - [15.8](#comparison--no-mixed-operators) 用圆括号来组合多种操作符。唯一里的例外就是像 `+`, `-`, 和 `**` 这种优先级容易理解的运算符。我们还是建议把 `/` `*` 放到小括号里， 因为他们混用的时候优先级容易有歧义。 eslint: [`no-mixed-operators`](https://eslint.org/docs/rules/no-mixed-operators.html)
 
     > 为什么？这提高了可读性，并且明确了开发者的意图。
 
@@ -2268,6 +2284,9 @@ const foo = a || b;
       return d;
     }
 
+    // bad
+    const bar = a + b / c * d;
+
     // good
     const foo = (a && b < 0) || c > 0 || (d + 1 === 0);
 
@@ -2280,7 +2299,7 @@ const foo = a || b;
     }
 
     // good
-    const bar = a + b / c * d;
+    const bar = a + (b / c) * d;
     ```
 
 **[⬆ back to top](#目录)**
@@ -2464,7 +2483,7 @@ const foo = a || b;
     ```
 
   <a name="17.2"></a>
-  <a name="control-statements--value-selection"></a>
+  <a name="control-statement--value-selection"></a><a name="control-statements--value-selection"></a>
   - [17.2](#control-statements--value-selection) 不要用选择操作符代替控制语句。
 
     ```javascript
@@ -2787,6 +2806,10 @@ const foo = a || b;
 
     // good
     const leds = stage.selectAll('.led').data(data);
+    const svg = leds.enter().append('svg:svg');
+    svg.classed('led', true).attr('width', (radius + margin) * 2);
+    const g = svg.append('svg:g');
+    g.attr('transform', `translate(${radius + margin},${radius + margin})`).call(tron.led);
     ```
 
   <a name="19.7"></a>
@@ -2885,55 +2908,56 @@ const foo = a || b;
   <a name="whitespace--no-multiple-blanks"></a>
   - [19.9](#whitespace--no-multiple-blanks) 不要在代码之间使用多个空白行填充。eslint: [`no-multiple-empty-lines`](https://eslint.org/docs/rules/no-multiple-empty-lines)
 
-```javascript
-// bad
-class Person {
-  constructor(fullName, email, birthday) {
-    this.fullName = fullName;
+    <!-- markdownlint-disable MD012 -->
+    ```javascript
+    // bad
+    class Person {
+      constructor(fullName, email, birthday) {
+        this.fullName = fullName;
 
 
-    this.email = email;
+        this.email = email;
 
 
-    this.setAge(birthday);
-  }
+        this.setAge(birthday);
+      }
 
 
-  setAge(birthday) {
-    const today = new Date();
+      setAge(birthday) {
+        const today = new Date();
 
 
-    const age = this.getAge(today, birthday);
+        const age = this.getAge(today, birthday);
 
 
-    this.age = age;
-  }
+        this.age = age;
+      }
 
 
-  getAge(today, birthday) {
-  // ..
-  }
-}
+      getAge(today, birthday) {
+        // ..
+      }
+    }
 
-// good
-class Person {
-  constructor(fullName, email, birthday) {
-    this.fullName = fullName;
-    this.email = email;
-    this.setAge(birthday);
-	}
+    // good
+    class Person {
+      constructor(fullName, email, birthday) {
+        this.fullName = fullName;
+        this.email = email;
+        this.setAge(birthday);
+      }
 
-  setAge(birthday) {
-    const today = new Date();
-    const age = getAge(today, birthday);
-    this.age = age;
-  }
+      setAge(birthday) {
+        const today = new Date();
+        const age = getAge(today, birthday);
+        this.age = age;
+      }
 
-  getAge(today, birthday) {
-  	// ..
-  }
-}
-```
+      getAge(today, birthday) {
+        // ..
+      }
+    }
+    ```
 
   <a name="19.10"></a>
   <a name="whitespace--in-parens"></a>
@@ -3051,15 +3075,15 @@ class Person {
 
   <a name="19.16"></a>
   <a name="whitespace--computed-property-spacing"></a>
-  - [19.16](#whitespace--computed-property-spacing) 计算属性内要空格。参考上述花括号和中括号的规则。  eslint: [`computed-property-spacing`](https://eslint.org/docs/rules/computed-property-spacing)
+  - [19.16](#whitespace--computed-property-spacing) 花括号跟属性间要有空格，中括号跟属性间没有空格。 eslint: [`computed-property-spacing`](https://eslint.org/docs/rules/computed-property-spacing)
 
-    译者注：原文可能有误，说明和代码不一致，以代码为准。
+    译者注：以代码为准。
 
     ```javascript
     // bad
     obj[foo ]
     obj[ 'foo']
-var x = {[ b ]: a}
+    var x = {[ b ]: a}
     obj[foo[ bar ]]
 
     // good
@@ -3090,11 +3114,11 @@ var x = {[ b ]: a}
 
     ```javascript
     // bad
-    var obj = { "foo" : 42 };
-    var obj2 = { "foo":42 };
+    var obj = { foo : 42 };
+    var obj2 = { foo:42 };
 
     // good
-    var obj = { "foo": 42 };
+    var obj = { foo: 42 };
     ```
 
   <a name="19.19"></a>
@@ -3105,28 +3129,32 @@ var x = {[ b ]: a}
   <a name="19.20"></a>
   <a name="whitespace--no-multiple-empty-lines"></a>
 
-  - [19.20](#whitespace--no-multiple-empty-lines) 避免出现多个空行。 在文件末尾只允许空一行。避免在文件开始处出现空行。eslint: [`no-multiple-empty-lines`](https://eslint.org/docs/rules/no-multiple-empty-lines)
-```javascript
-// bad - multiple empty lines
-var x = 1;
+  - [19.20](#whitespace--no-multiple-empty-lines) 避免出现多个空行。 在文件末尾只允许空一行。文件开始处不要出现空行。eslint: [`no-multiple-empty-lines`](https://eslint.org/docs/rules/no-multiple-empty-lines)
+
+    <!-- markdownlint-disable MD012 -->
+    ```javascript
+    // bad - multiple empty lines
+    var x = 1;
 
 
-var y = 2;
+    var y = 2;
 
-// bad - 2+ newlines at end of file
-var x = 1;
-var y = 2;
+    // bad - 2+ newlines at end of file
+    var x = 1;
+    var y = 2;
 
 
-// bad - 1+ newline(s) at beginning of file
+    // bad - 1+ newline(s) at beginning of file
 
-var x = 1;
-var y = 2;
+    var x = 1;
+    var y = 2;
 
-// good
-var x = 1;
-var y = 2;
-```
+    // good
+    var x = 1;
+    var y = 2;
+
+    ```
+    <!-- markdownlint-enable MD012 -->
 
 **[⬆ 返回顶部](#目录)**
 
@@ -3276,44 +3304,44 @@ var y = 2;
 
     > 为什么？当 JavaScript 遇到没有分号结尾的一行，它会执行 [自动插入分号](https://tc39.github.io/ecma262/#sec-automatic-semicolon-insertion) 这一规则来决定行末是否加分号。如果 JavaScript 在你的断行里错误的插入了分号，就会出现一些古怪的行为。当新的功能加到JavaScript 里后， 这些规则会变得更复杂难懂。清晰的结束语句，并通过配置代码检查去检查没有带分号的地方可以帮助你防止这种错误。
 
-```javascript
-// bad - 抛出异常
-const luke = {}
-const leia = {}
-[luke, leia].forEach((jedi) => jedi.father = 'vader')
+    ```javascript
+    // bad - 抛出异常
+    const luke = {}
+    const leia = {}
+    [luke, leia].forEach((jedi) => jedi.father = 'vader')
 
-// bad - 抛出异常
-const reaction = "No! That’s impossible!"
-(async function meanwhileOnTheFalcon() {
-  // 处理 `leia`, `lando`, `chewie`, `r2`, `c3p0`
-  // ...
-}())
+    // bad - 抛出异常
+    const reaction = "No! That’s impossible!"
+    (async function meanwhileOnTheFalcon() {
+      // 处理 `leia`, `lando`, `chewie`, `r2`, `c3p0`
+      // ...
+    }())
 
-// bad - 将返回 `undefined` 而不是下一行的值。由于 ASI，当 `return`单独出现在一行时，这种情况会一直出现。
-function foo() {
-  return
-    'search your feelings, you know it to be foo'
-}
+    // bad - 将返回 `undefined` 而不是下一行的值。由于 ASI，当 `return`单独出现在一行时，这种情况会一直出现。
+    function foo() {
+      return
+        'search your feelings, you know it to be foo'
+    }
 
-// good
-const luke = {};
-const leia = {};
-[luke, leia].forEach((jedi) => {
-  jedi.father = 'vader';
-});
+    // good
+    const luke = {};
+    const leia = {};
+    [luke, leia].forEach((jedi) => {
+      jedi.father = 'vader';
+    });
 
-// good
-const reaction = "No! That’s impossible!";
-(async function meanwhileOnTheFalcon() {
-  // handle `leia`, `lando`, `chewie`, `r2`, `c3p0`
-  // ...
-}());
+    // good
+    const reaction = "No! That’s impossible!";
+    (async function meanwhileOnTheFalcon() {
+      // handle `leia`, `lando`, `chewie`, `r2`, `c3p0`
+      // ...
+    }());
 
-// good
-function foo() {
-  return 'search your feelings, you know it to be foo';
-}
-```
+    // good
+    function foo() {
+      return 'search your feelings, you know it to be foo';
+    }
+    ```
 
     [更多](https://stackoverflow.com/questions/7365172/semicolon-before-self-invoking-function/7365214%237365214).
 
@@ -3353,23 +3381,23 @@ function foo() {
   - [22.3](#coercion--numbers) 数字: 用 `Number` 做类型转换，`parseInt` 转换 `string` 应总是带上基数。 eslint: [`radix`](http://eslint.org/docs/rules/radix)
 
     > 为什么？函数 `parseInt`  会根据指定的基数将字符串转换为数字。字符串开头的空白字符将会被忽略，如果参数基数（第二个参数）为 `undefined` 或者 `0` ，除非字符串开头为 `0x` 或 `0X`（十六进制），会默认假设为 `10`。这个差异来自 ECMAScript 3，它不鼓励（但是允许）解释八进制。在 2013 年之前，一些实现不兼容这种行为。因为我们需要支持旧浏览器，所以应当始终指定进制。
-    >
-> 译者注：翻译的可能不是很好，总之使用 `parseInt()` 时始终指定进制数（第二个参数）就可以了。
+
+    > 译者注：翻译的可能不是很好，总之使用 `parseInt()` 时始终指定进制数（第二个参数）就可以了。
 
     ```javascript
-const inputValue = '4';
+    const inputValue = '4';
 
     // bad
-const val = new Number(inputValue);
+    const val = new Number(inputValue);
 
     // bad
-const val = +inputValue;
+    const val = +inputValue;
 
     // bad
-const val = inputValue >> 0;
+    const val = inputValue >> 0;
 
     // bad
-const val = parseInt(inputValue);
+    const val = parseInt(inputValue);
 
     // good
     const val = Number(inputValue);
@@ -3404,7 +3432,7 @@ const val = parseInt(inputValue);
 
   <a name="22.6"></a>
   <a name="coercion--booleans"></a>
-  - [22.6](#coercion--booleans) 布尔:
+  - [22.6](#coercion--booleans) 布尔: eslint: [`no-new-wrappers`](https://eslint.org/docs/rules/no-new-wrappers)
 
     ```javascript
     const age = 0;
@@ -3633,39 +3661,38 @@ const val = parseInt(inputValue);
 
     1. 导出变量；
     1. 是 `const` 定义的， 保证不能被改变；
-1. 这个变量是可信的，他的子属性都是不能被改变的。
+    1. 这个变量是可信的，他的子属性都是不能被改变的。
 
-    > 为什么？这是一个附加工具，帮助开发者去辨识一个变量是不是不可变的。UPPERCASE_VARIABLES 能让开发者知道他能确信这个变量（以及他的属性）是不会变的。
+      > 为什么？这是一个附加工具，帮助开发者去辨识一个变量是不是不可变的。UPPERCASE_VARIABLES 能让开发者知道他能确信这个变量（以及他的属性）是不会变的。
 
-    - 对于所有的 `const` 变量呢？ —— 这个是不必要的。大写变量不应该在同一个文件里定义并使用， 它只能用来作为导出变量。
-- 那导出的对象呢？ —— 大写变量处在 `export` 的最高级(例如：`EXPORTED_OBJECT.key`) 并且他包含的所有子属性都是不可变的。（译者注：即导出的变量是全大写的，但他的属性不用大写）
+      - 对于所有的 `const` 变量呢？ —— 这个是不必要的。大写变量不应该在同一个文件里定义并使用， 它只能用来作为导出变量。
+      - 那导出的对象呢？ —— 大写变量处在 `export` 的最高级(例如：`EXPORTED_OBJECT.key`) 并且他包含的所有子属性都是不可变的。（译者注：即导出的变量是全大写的，但他的属性不用大写）
 
     ```javascript
     // bad
-const PRIVATE_VARIABLE = 'should not be unnecessarily uppercased within a file';
+    const PRIVATE_VARIABLE = 'should not be unnecessarily uppercased within a file';
 
     // bad
-export const THING_TO_BE_CHANGED = 'should obviously not be uppercased';
+    export const THING_TO_BE_CHANGED = 'should obviously not be uppercased';
 
     // bad
-export let REASSIGNABLE_VARIABLE = 'do not use let with uppercase variables';
+    export let REASSIGNABLE_VARIABLE = 'do not use let with uppercase variables';
 
-    ```
 
-// ---
+    // ---
 
     // 允许但不够语义化
-export const apiKey = 'SOMEKEY';
+    export const apiKey = 'SOMEKEY';
 
     // 在大多数情况下更好
-export const API_KEY = 'SOMEKEY';
+    export const API_KEY = 'SOMEKEY';
 
-// ---
+    // ---
 
     // bad - 不必要的大写键，没有增加任何语义
     export const MAPPING = {
       KEY: 'value'
-};
+    };
 
     // good
     export const MAPPING = {
@@ -3962,12 +3989,12 @@ export const API_KEY = 'SOMEKEY';
 
   - [On Layout & Web Performance](https://www.kellegous.com/j/2013/01/26/layout-performance/)
   - [String vs Array Concat](https://jsperf.com/string-vs-array-concat/2)
-  - [Try/Catch Cost In a Loop](https://jsperf.com/try-catch-in-loop-cost)
+  - [Try/Catch Cost In a Loop](https://jsperf.com/try-catch-in-loop-cost/12)
   - [Bang Function](https://jsperf.com/bang-function)
-  - [jQuery Find vs Context, Selector](https://jsperf.com/jquery-find-vs-context-sel/13)
+  - [jQuery Find vs Context, Selector](https://jsperf.com/jquery-find-vs-context-sel/164)
   - [innerHTML vs textContent for script text](https://jsperf.com/innerhtml-vs-textcontent-for-script-text)
-  - [Long String Concatenation](https://jsperf.com/ya-string-concat)
-  - [Are Javascript functions like `map()`, `reduce()`, and `filter()` optimized for traversing arrays?](https://www.quora.com/JavaScript-programming-language-Are-Javascript-functions-like-map-reduce-and-filter-already-optimized-for-traversing-array/answer/Quildreen-Motta)
+  - [Long String Concatenation](https://jsperf.com/ya-string-concat/38)
+  - [Are JavaScript functions like `map()`, `reduce()`, and `filter()` optimized for traversing arrays?](https://www.quora.com/JavaScript-programming-language-Are-Javascript-functions-like-map-reduce-and-filter-already-optimized-for-traversing-array/answer/Quildreen-Motta)
   - Loading...
 
 **[⬆ back to top](#目录)**
@@ -3978,26 +4005,28 @@ export const API_KEY = 'SOMEKEY';
 **Learning ES6**
 
   - [Draft ECMA 2015 (ES6) Spec](https://people.mozilla.org/~jorendorff/es6-draft.html)
-  - [ExploringJS](http://exploringjs.com/)
+  - [ExploringJS](https://exploringjs.com/)
   - [ES6 Compatibility Table](https://kangax.github.io/compat-table/es6/)
   - [Comprehensive Overview of ES6 Features](http://es6-features.org/)
 
 **Read This**
 
-  - [Standard ECMA-262](http://www.ecma-international.org/ecma-262/6.0/index.html)
+  - [Standard ECMA-262](https://www.ecma-international.org/ecma-262/6.0/index.html)
 
 **Tools**
 
   - Code Style Linters
-    + [ESlint](http://eslint.org/) - [Airbnb Style .eslintrc](https://github.com/airbnb/javascript/blob/master/linters/.eslintrc)
-    + [JSHint](http://jshint.com/) - [Airbnb Style .jshintrc](https://github.com/airbnb/javascript/blob/master/linters/.jshintrc)
-    + [JSCS](https://github.com/jscs-dev/node-jscs) - [Airbnb Style Preset](https://github.com/jscs-dev/node-jscs/blob/master/presets/airbnb.json)
+    - [ESlint](https://eslint.org/) - [Airbnb Style .eslintrc](https://github.com/airbnb/javascript/blob/master/linters/.eslintrc)
+    - [JSHint](https://jshint.com/) - [Airbnb Style .jshintrc](https://github.com/airbnb/javascript/blob/master/linters/.jshintrc)
+  - Neutrino Preset - [@neutrinojs/airbnb](https://neutrinojs.org/packages/airbnb/)
 
 **Other Style Guides**
 
-  - [Google JavaScript Style Guide](https://google.github.io/styleguide/javascriptguide.xml)
+  - [Google JavaScript Style Guide](https://google.github.io/styleguide/jsguide.html)
+  - [Google JavaScript Style Guide (Old)](https://google.github.io/styleguide/javascriptguide.xml)
   - [jQuery Core Style Guidelines](https://contribute.jquery.org/style-guide/js/)
   - [Principles of Writing Consistent, Idiomatic JavaScript](https://github.com/rwaldron/idiomatic.js)
+  - [StandardJS](https://standardjs.com)
 
 **Other Styles**
 
@@ -4009,8 +4038,8 @@ export const API_KEY = 'SOMEKEY';
 **Further Reading**
 
   - [Understanding JavaScript Closures](https://javascriptweblog.wordpress.com/2010/10/25/understanding-javascript-closures/) - Angus Croll
-  - [Basic JavaScript for the impatient programmer](http://www.2ality.com/2013/06/basic-javascript.html) - Dr. Axel Rauschmayer
-  - [You Might Not Need jQuery](http://youmightnotneedjquery.com/) - Zack Bloom & Adam Schwartz
+  - [Basic JavaScript for the impatient programmer](https://www.2ality.com/2013/06/basic-javascript.html) - Dr. Axel Rauschmayer
+  - [You Might Not Need jQuery](https://youmightnotneedjquery.com/) - Zack Bloom & Adam Schwartz
   - [ES6 Features](https://github.com/lukehoban/es6features) - Luke Hoban
   - [Frontend Guidelines](https://github.com/bendc/frontend-guidelines) - Benjamin De Cock
 
@@ -4018,7 +4047,7 @@ export const API_KEY = 'SOMEKEY';
 
   - [JavaScript: The Good Parts](https://www.amazon.com/JavaScript-Good-Parts-Douglas-Crockford/dp/0596517742) - Douglas Crockford
   - [JavaScript Patterns](https://www.amazon.com/JavaScript-Patterns-Stoyan-Stefanov/dp/0596806752) - Stoyan Stefanov
-  - [Pro JavaScript Design Patterns](https://www.amazon.com/JavaScript-Design-Patterns-Recipes-Problem-Solution/dp/159059908X)  - Ross Harmes and Dustin Diaz
+  - [Pro JavaScript Design Patterns](https://www.amazon.com/JavaScript-Design-Patterns-Recipes-Problem-Solution/dp/159059908X) - Ross Harmes and Dustin Diaz
   - [High Performance Web Sites: Essential Knowledge for Front-End Engineers](https://www.amazon.com/High-Performance-Web-Sites-Essential/dp/0596529309) - Steve Souders
   - [Maintainable JavaScript](https://www.amazon.com/Maintainable-JavaScript-Nicholas-C-Zakas/dp/1449327680) - Nicholas C. Zakas
   - [JavaScript Web Applications](https://www.amazon.com/JavaScript-Web-Applications-Alex-MacCaw/dp/144930351X) - Alex MacCaw
@@ -4027,24 +4056,23 @@ export const API_KEY = 'SOMEKEY';
   - [Secrets of the JavaScript Ninja](https://www.amazon.com/Secrets-JavaScript-Ninja-John-Resig/dp/193398869X) - John Resig and Bear Bibeault
   - [Human JavaScript](http://humanjavascript.com/) - Henrik Joreteg
   - [Superhero.js](http://superherojs.com/) - Kim Joar Bekkelund, Mads Mobæk, & Olav Bjorkoy
-  - [JSBooks](http://jsbooks.revolunet.com/) - Julien Bouquillon
+  - [JSBooks](https://jsbooks.revolunet.com/) - Julien Bouquillon
   - [Third Party JavaScript](https://www.manning.com/books/third-party-javascript) - Ben Vinegar and Anton Kovalyov
-  - [Effective JavaScript: 68 Specific Ways to Harness the Power of JavaScript](http://amzn.com/0321812182) - David Herman
-  - [Eloquent JavaScript](http://eloquentjavascript.net/) - Marijn Haverbeke
-  - [You Don't Know JS: ES6 & Beyond](http://shop.oreilly.com/product/0636920033769.do) - Kyle Simpson
+  - [Effective JavaScript: 68 Specific Ways to Harness the Power of JavaScript](https://amzn.com/0321812182) - David Herman
+  - [Eloquent JavaScript](https://eloquentjavascript.net/) - Marijn Haverbeke
+  - [You Don’t Know JS: ES6 & Beyond](https://shop.oreilly.com/product/0636920033769.do) - Kyle Simpson
 
 **Blogs**
 
-  - [JavaScript Weekly](http://javascriptweekly.com/)
+  - [JavaScript Weekly](https://javascriptweekly.com/)
   - [JavaScript, JavaScript...](https://javascriptweblog.wordpress.com/)
   - [Bocoup Weblog](https://bocoup.com/weblog)
-  - [Adequately Good](http://www.adequatelygood.com/)
+  - [Adequately Good](https://www.adequatelygood.com/)
   - [NCZOnline](https://www.nczonline.net/)
   - [Perfection Kills](http://perfectionkills.com/)
-  - [Ben Alman](http://benalman.com/)
+  - [Ben Alman](https://benalman.com/)
   - [Dmitry Baranovskiy](http://dmitry.baranovskiy.com/)
-  - [Dustin Diaz](http://dustindiaz.com/)
-  - [nettuts](http://code.tutsplus.com/?s=javascript)
+  - [nettuts](https://code.tutsplus.com/?s=javascript)
 
 **Podcasts**
 
@@ -4060,18 +4088,15 @@ export const API_KEY = 'SOMEKEY';
   This is a list of organizations that are using this style guide. Send us a pull request and we'll add you to the list.
 
   - **123erfasst**: [123erfasst/javascript](https://github.com/123erfasst/javascript)
-  - **3blades**: [3Blades](https://github.com/3blades)
   - **4Catalyzer**: [4Catalyzer/javascript](https://github.com/4Catalyzer/javascript)
   - **Aan Zee**: [AanZee/javascript](https://github.com/AanZee/javascript)
-  - **Adult Swim**: [adult-swim/javascript](https://github.com/adult-swim/javascript)
   - **Airbnb**: [airbnb/javascript](https://github.com/airbnb/javascript)
+  - **AloPeyk**: [AloPeyk](https://github.com/AloPeyk)
   - **AltSchool**: [AltSchool/javascript](https://github.com/AltSchool/javascript)
   - **Apartmint**: [apartmint/javascript](https://github.com/apartmint/javascript)
   - **Ascribe**: [ascribe/javascript](https://github.com/ascribe/javascript)
-  - **Avalara**: [avalara/javascript](https://github.com/avalara/javascript)
   - **Avant**: [avantcredit/javascript](https://github.com/avantcredit/javascript)
   - **Axept**: [axept/javascript](https://github.com/axept/javascript)
-  - **BashPros**: [BashPros/javascript](https://github.com/BashPros/javascript)
   - **Billabong**: [billabong/javascript](https://github.com/billabong/javascript)
   - **Bisk**: [bisk](https://github.com/Bisk/)
   - **Bonhomme**: [bonhommeparis/javascript](https://github.com/bonhommeparis/javascript)
@@ -4079,18 +4104,18 @@ export const API_KEY = 'SOMEKEY';
   - **CaseNine**: [CaseNine/javascript](https://github.com/CaseNine/javascript)
   - **Cerner**: [Cerner](https://github.com/cerner/)
   - **Chartboost**: [ChartBoost/javascript-style-guide](https://github.com/ChartBoost/javascript-style-guide)
+  - **Coeur d'Alene Tribe**: [www.cdatribe-nsn.gov](https://www.cdatribe-nsn.gov)
   - **ComparaOnline**: [comparaonline/javascript](https://github.com/comparaonline/javascript-style-guide)
   - **Compass Learning**: [compasslearning/javascript-style-guide](https://github.com/compasslearning/javascript-style-guide)
   - **DailyMotion**: [dailymotion/javascript](https://github.com/dailymotion/javascript)
   - **DoSomething**: [DoSomething/eslint-config](https://github.com/DoSomething/eslint-config)
   - **Digitpaint** [digitpaint/javascript](https://github.com/digitpaint/javascript)
-  - **Drupal**: [www.drupal.org](https://www.drupal.org/project/drupal)
+  - **Drupal**: [www.drupal.org](https://git.drupalcode.org/project/drupal/blob/8.6.x/core/.eslintrc.json)
   - **Ecosia**: [ecosia/javascript](https://github.com/ecosia/javascript)
   - **Evernote**: [evernote/javascript-style-guide](https://github.com/evernote/javascript-style-guide)
   - **Evolution Gaming**: [evolution-gaming/javascript](https://github.com/evolution-gaming/javascript)
   - **EvozonJs**: [evozonjs/javascript](https://github.com/evozonjs/javascript)
   - **ExactTarget**: [ExactTarget/javascript](https://github.com/ExactTarget/javascript)
-  - **Expensify** [Expensify/Style-Guide](https://github.com/Expensify/Style-Guide/blob/master/javascript.md)
   - **Flexberry**: [Flexberry/javascript-style-guide](https://github.com/Flexberry/javascript-style-guide)
   - **Gawker Media**: [gawkermedia](https://github.com/gawkermedia/)
   - **General Electric**: [GeneralElectric/javascript](https://github.com/GeneralElectric/javascript)
@@ -4099,14 +4124,13 @@ export const API_KEY = 'SOMEKEY';
   - **GreenChef**: [greenchef/javascript](https://github.com/greenchef/javascript)
   - **Grooveshark**: [grooveshark/javascript](https://github.com/grooveshark/javascript)
   - **Grupo-Abraxas**: [Grupo-Abraxas/javascript](https://github.com/Grupo-Abraxas/javascript)
+  - **Happeo**: [happeo/javascript](https://github.com/happeo/javascript)
   - **Honey**: [honeyscience/javascript](https://github.com/honeyscience/javascript)
   - **How About We**: [howaboutwe/javascript](https://github.com/howaboutwe/javascript-style-guide)
-  - **Huballin**: [huballin](https://github.com/huballin/)
   - **HubSpot**: [HubSpot/javascript](https://github.com/HubSpot/javascript)
   - **Hyper**: [hyperoslo/javascript-playbook](https://github.com/hyperoslo/javascript-playbook/blob/master/style.md)
   - **InterCity Group**: [intercitygroup/javascript-style-guide](https://github.com/intercitygroup/javascript-style-guide)
   - **Jam3**: [Jam3/Javascript-Code-Conventions](https://github.com/Jam3/Javascript-Code-Conventions)
-  - **JeopardyBot**: [kesne/jeopardy-bot](https://github.com/kesne/jeopardy-bot/blob/master/STYLEGUIDE.md)
   - **JSSolutions**: [JSSolutions/javascript](https://github.com/JSSolutions/javascript)
   - **Kaplan Komputing**: [kaplankomputing/javascript](https://github.com/kaplankomputing/javascript)
   - **KickorStick**: [kickorstick](https://github.com/kickorstick/)
@@ -4117,11 +4141,9 @@ export const API_KEY = 'SOMEKEY';
   - **Mighty Spring**: [mightyspring/javascript](https://github.com/mightyspring/javascript)
   - **MinnPost**: [MinnPost/javascript](https://github.com/MinnPost/javascript)
   - **MitocGroup**: [MitocGroup/javascript](https://github.com/MitocGroup/javascript)
-  - **ModCloth**: [modcloth/javascript](https://github.com/modcloth/javascript)
-  - **Money Advice Service**: [moneyadviceservice/javascript](https://github.com/moneyadviceservice/javascript)
   - **Muber**: [muber](https://github.com/muber/)
   - **National Geographic**: [natgeo](https://github.com/natgeo/)
-  - **Nimbl3**: [nimbl3/javascript](https://github.com/nimbl3/javascript)
+  - **NullDev**: [NullDevCo/JavaScript-Styleguide](https://github.com/NullDevCo/JavaScript-Styleguide)
   - **Nulogy**: [nulogy/javascript](https://github.com/nulogy/javascript)
   - **Orange Hill Development**: [orangehill/javascript](https://github.com/orangehill/javascript)
   - **Orion Health**: [orionhealth/javascript](https://github.com/orionhealth/javascript)
@@ -4129,13 +4151,10 @@ export const API_KEY = 'SOMEKEY';
   - **Peerby**: [Peerby/javascript](https://github.com/Peerby/javascript)
   - **Pier 1**: [Pier1/javascript](https://github.com/pier1/javascript)
   - **Qotto**: [Qotto/javascript-style-guide](https://github.com/Qotto/javascript-style-guide)
-  - **Razorfish**: [razorfish/javascript-style-guide](https://github.com/razorfish/javascript-style-guide)
-  - **reddit**: [reddit/styleguide/javascript](https://github.com/reddit/styleguide/tree/master/javascript)
   - **React**: [facebook.github.io/react/contributing/how-to-contribute.html#style-guide](https://facebook.github.io/react/contributing/how-to-contribute.html#style-guide)
   - **REI**: [reidev/js-style-guide](https://github.com/rei/code-style-guides/)
   - **Ripple**: [ripple/javascript-style-guide](https://github.com/ripple/javascript-style-guide)
   - **Sainsbury’s Supermarkets**: [jsainsburyplc](https://github.com/jsainsburyplc)
-  - **SeekingAlpha**: [seekingalpha/javascript-style-guide](https://github.com/seekingalpha/javascript-style-guide)
   - **Shutterfly**: [shutterfly/javascript](https://github.com/shutterfly/javascript)
   - **Sourcetoad**: [sourcetoad/javascript](https://github.com/sourcetoad/javascript)
   - **Springload**: [springload](https://github.com/springload/)
@@ -4146,9 +4165,13 @@ export const API_KEY = 'SOMEKEY';
   - **SysGarage**: [sysgarage/javascript-style-guide](https://github.com/sysgarage/javascript-style-guide)
   - **Syzygy Warsaw**: [syzygypl/javascript](https://github.com/syzygypl/javascript)
   - **Target**: [target/javascript](https://github.com/target/javascript)
+  - **Terra**: [terra](https://github.com/cerner?utf8=%E2%9C%93&q=terra&type=&language=)
   - **TheLadders**: [TheLadders/javascript](https://github.com/TheLadders/javascript)
   - **The Nerdery**: [thenerdery/javascript-standards](https://github.com/thenerdery/javascript-standards)
+  - **Tomify**: [tomprats](https://github.com/tomprats)
+  - **Traitify**: [traitify/eslint-config-traitify](https://github.com/traitify/eslint-config-traitify)
   - **T4R Technology**: [T4R-Technology/javascript](https://github.com/T4R-Technology/javascript)
+  - **UrbanSim**: [urbansim](https://github.com/urbansim/)
   - **VoxFeed**: [VoxFeed/javascript-style-guide](https://github.com/VoxFeed/javascript-style-guide)
   - **WeBox Studio**: [weboxstudio/javascript](https://github.com/weboxstudio/javascript)
   - **Weggo**: [Weggo/javascript](https://github.com/Weggo/javascript)
@@ -4176,7 +4199,7 @@ export const API_KEY = 'SOMEKEY';
   - ![th](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Thailand.png) **Thai**: [lvarayut/javascript-style-guide](https://github.com/lvarayut/javascript-style-guide)
   - ![tr](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Turkey.png) **Turkish**: [eraycetinay/javascript](https://github.com/eraycetinay/javascript)
   - ![ua](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Ukraine.png) **Ukrainian**: [ivanzusko/javascript](https://github.com/ivanzusko/javascript)
-  - ![vn](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Vietnam.png) **Vietnam**: [hngiang/javascript-style-guide](https://github.com/hngiang/javascript-style-guide)
+  - ![vn](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/Vietnam.png) **Vietnam**: [dangkyokhoang/javascript-style-guide](https://github.com/dangkyokhoang/javascript-style-guide)
 
 ## The JavaScript Style Guide Guide
 
