@@ -12,3 +12,4 @@
 4. master 节点同步到 upstream 最新节点； `git checkout master && git rebase upstream/master`
 
 ### 文档发布
+`sh scripts/page.sh` 将 Markdown 文档发布到 gp-pages 分支
