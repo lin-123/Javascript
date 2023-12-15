@@ -1050,7 +1050,7 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
     > 为什么？语法糖，当多个函数链在一起的时候好读。
 
     ```javascript
-    // bad
+    // bad map 没有 return
     [1, 2, 3].map((number) => {
       const nextNumber = number + 1;
       `A string containing the ${nextNumber}.`;
@@ -1070,11 +1070,11 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
       [index]: number,
     }));
 
-    // 没有明显的 return 语句，可能存在副作用。
+    // 没有明显的存在副作用的 return 语句
     function foo(callback) {
       const val = callback();
       if (val === true) {
-        // 当 callback 返回 true 时...
+        // 当 callback 返回 true 时在这里执行
       }
     }
 
@@ -2746,7 +2746,7 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
 
   <a name="19.5"></a>
   <a name="whitespace--newline-at-end"></a>
-  - [19.5](#whitespace--newline-at-end) 文件结尾空一行。eslint: [`eol-last`](https://github.com/eslint/eslint/blob/master/docs/rules/eol-last.md)
+  - [19.5](#whitespace--newline-at-end) 文件结尾空一行。eslint: [`eol-last`](https://eslint.org/docs/rules/eol-last)
 
     ```javascript
     // bad
@@ -4165,7 +4165,7 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
   - **Peerby**: [Peerby/javascript](https://github.com/Peerby/javascript)
   - **Pier 1**: [Pier1/javascript](https://github.com/pier1/javascript)
   - **Qotto**: [Qotto/javascript-style-guide](https://github.com/Qotto/javascript-style-guide)
-  - **React**: [reactjs.org/docs/how-to-contribute.html#style-guide](https://reactjs.org/docs/how-to-contribute.html#style-guide)
+  - **React**: [https://legacy.reactjs.org/docs/how-to-contribute.html#style-guide](https://legacy.reactjs.org/docs/how-to-contribute.html#style-guide)
   - **REI**: [reidev/js-style-guide](https://github.com/rei/code-style-guides/)
   - **Ripple**: [ripple/javascript-style-guide](https://github.com/ripple/javascript-style-guide)
   - **Sainsbury’s Supermarkets**: [jsainsburyplc](https://github.com/jsainsburyplc)
