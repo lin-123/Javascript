@@ -6,32 +6,36 @@
 
 ## 目录
 
-  1. [基本规则(Basic Rules)](#basic-rules)
-  1. [Class vs `React.createClass` vs stateless](#class-vs-reactcreateclass-vs-stateless)
-  1. [混合(Mixins)](#mixins)
-  1. [命名(Naming)](#naming)
-  1. [声明(Declaration)](#declaration)
-  1. [对齐(Alignment)](#alignment)
-  1. [引号(Quotes)](#quotes)
-  1. [空格(Spacing)](#spacing)
-  1. [属性(Props)](#props)
-  1. [引用(Refs)](#refs)
-  1. [括号(Parentheses)](#parentheses)
-  1. [标签(Tags)](#tags)
-  1. [方法(Methods)](#methods)
-  1. [排序(Ordering)](#ordering)
-  1. [`isMounted`](#ismounted)
+- [Airbnb React/JSX 风格指南](#airbnb-reactjsx-风格指南)
+  - [目录](#目录)
+  - [Basic Rules](#basic-rules)
+  - [Class vs `React.createClass` vs stateless](#class-vs-reactcreateclass-vs-stateless)
+  - [Mixins](#mixins)
+  - [Naming](#naming)
+  - [Declaration](#declaration)
+  - [Alignment](#alignment)
+  - [Quotes](#quotes)
+  - [Spacing](#spacing)
+  - [Props](#props)
+  - [Refs](#refs)
+  - [Parentheses](#parentheses)
+  - [Tags](#tags)
+  - [Methods](#methods)
+  - [Ordering](#ordering)
+  - [`isMounted`](#ismounted)
+  - [Translation](#translation)
 
 ## Basic Rules
 
   - 每个文件只包含一个 React 组件
-    - 然而，在一个文件里包含多个[没有 state 或纯组件](https://facebook.github.io/react/docs/reusable-components.html#stateless-functions)是允许的。 eslint: [`react/no-multi-comp`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-multi-comp.md#ignorestateless).
+    - 然而，在一个文件里包含多个[没有 state 或纯组件](https://facebook.github.io/react/docs/reusable-components.html#stateless-functions)是允许的。 eslint: [`react/no-multi-comp`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-multi-comp.md#ignorestateless).
   - 经常用 JSX 语法。
   - 不要用 `React.createElement`， 除非你从一个非 JSX 文件中初始化 app。
+  - [`react/forbid-prop-types`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/forbid-prop-types.md) 只有在明确指定了数组和对象中包含的内容，使用 `arrayOf` 、 `objectOf` 或 `shape` 时才允许使用数组和对象。
 
 ## Class vs `React.createClass` vs stateless
 
-  - 如果你要用 state refs， 最好用 `class extends React.Component` 而不是 `React.createClass`. eslint: [`react/prefer-es6-class`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-es6-class.md) [`react/prefer-stateless-function`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-stateless-function.md)
+  - 如果你要用 state refs， 最好用 `class extends React.Component` 而不是 `React.createClass`。 eslint: [`react/prefer-es6-class`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/prefer-es6-class.md) [`react/prefer-stateless-function`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/prefer-stateless-function.md)
 
     ```jsx
     // bad
@@ -80,9 +84,9 @@
 
 ## Naming
 
-  - **扩展名**: 用 `.jsx` 作为组件扩展名。
+  - **扩展名**: 用 `.jsx` 作为组件扩展名。eslint: eslint: [`react/jsx-filename-extension`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md)
   - **文件名**: 用大驼峰作为文件名，如：`ReservationCard.jsx`。
-  - **参数命名**: React 组件用大驼峰，组件的实例用小驼峰。 eslint: [`react/jsx-pascal-case`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-pascal-case.md)
+  - **参数命名**: React 组件用大驼峰，组件的实例用小驼峰。 eslint: [`react/jsx-pascal-case`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-pascal-case.md)
 
     ```jsx
     // bad
@@ -170,7 +174,7 @@
 
 ## Alignment
 
-  - 对 JSX 语法使用这些对齐风格。 eslint: [`react/jsx-closing-bracket-location`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-closing-bracket-location.md) [`react/jsx-closing-tag-location`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-closing-tag-location.md)
+  - 对 JSX 语法使用这些对齐风格。 eslint: [`react/jsx-closing-bracket-location`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-closing-bracket-location.md) [`react/jsx-closing-tag-location`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-closing-tag-location.md)
 
     ```jsx
     // bad
@@ -236,7 +240,7 @@
 
 ## Spacing
 
-  - 在自闭和标签内空一格。 eslint: [`no-multi-spaces`](https://eslint.org/docs/rules/no-multi-spaces), [`react/jsx-tag-spacing`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-tag-spacing.md)
+  - 在自闭合标签内空一格。 eslint: [`no-multi-spaces`](https://eslint.org/docs/rules/no-multi-spaces), [`react/jsx-tag-spacing`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-tag-spacing.md)
 
     ```jsx
     // bad
@@ -253,7 +257,7 @@
     <Foo />
     ```
 
-  - JSX 里的大括号不要空格。 eslint: [`react/jsx-curly-spacing`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-curly-spacing.md)
+  - JSX 里的大括号不要空格。 eslint: [`react/jsx-curly-spacing`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-curly-spacing.md)
 
     ```jsx
     // bad
@@ -281,7 +285,7 @@
     />
     ```
 
-  - 如果 prop 的值是 true 可以忽略这个值，直接写 prop 名就可以。 eslint: [`react/jsx-boolean-value`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-boolean-value.md)
+  - 如果 prop 的值是 true 可以忽略这个值，直接写 prop 名就可以。 eslint: [`react/jsx-boolean-value`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-boolean-value.md)
 
     ```jsx
     // bad
@@ -298,7 +302,7 @@
     <Foo hidden />
     ```
 
-  - `<img>` 标签通常会设置 `alt` 属性。如果图片是表现型的， `alt`可以是空字符串或者 `<img>` 必须有 `role="presentation"` 这个属性。 eslint: [`jsx-a11y/alt-text`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/alt-text.md)
+  - `<img>` 标签通常会设置 `alt` 属性。如果图片是表现型的， `alt`可以是空字符串或者 `<img>` 必须有 `role="presentation"` 这个属性。 eslint: [`jsx-a11y/alt-text`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/master/docs/rules/alt-text.md)
 
     ```jsx
     // bad
@@ -314,7 +318,7 @@
     <img src="hello.jpg" role="presentation" />
     ```
 
-  - 不要在 `<img>` 的 `alt` 属性里用类似 "image"， "photo"， "picture" 这些单词。 eslint: [`jsx-a11y/img-redundant-alt`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/img-redundant-alt.md)
+  - 不要在 `<img>` 的 `alt` 属性里用类似 "image"， "photo"， "picture" 这些单词。 eslint: [`jsx-a11y/img-redundant-alt`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/master/docs/rules/img-redundant-alt.md)
 
     > Why? 因为屏幕阅读器已经将 `img` 发音为图片了，所以这个信息就不需要出现在 alt 文本里了。
 
@@ -326,7 +330,7 @@
     <img src="hello.jpg" alt="Me waving hello" />
     ```
 
-  - 只用可用的，不抽象的 [ARIA roles](https://www.w3.org/TR/wai-aria/#usage_intro). eslint: [`jsx-a11y/aria-role`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/aria-role.md)
+  - 只用可用的，不抽象的 [ARIA roles](https://www.w3.org/TR/wai-aria/#usage_intro). eslint: [`jsx-a11y/aria-role`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/master/docs/rules/aria-role.md)
 
     ```jsx
     // bad - 不是一个 ARIA role
@@ -339,7 +343,7 @@
     <div role="button" />
     ```
 
-  - 不要在元素上用 `accessKey`。 eslint: [`jsx-a11y/no-access-key`](https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/no-access-key.md)
+  - 不要在元素上用 `accessKey`。 eslint: [`jsx-a11y/no-access-key`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/master/docs/rules/no-access-key.md)
 
   > Why? 使用屏幕阅读器和键盘的人使用的键盘快捷键和键盘命令之间的不一致使得可访问性变得复杂。
 
@@ -351,7 +355,7 @@
   <div />
   ```
 
-  - 避免用数组下标作为 `key` 属性，推荐用稳定的 ID
+  - 避免用数组下标作为 `key` 属性，推荐用稳定的 ID。 eslint: [`react/no-array-index-key`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-array-index-key.md)
 
   > Why? 不使用稳定杆的 ID [is an anti-pattern](https://medium.com/@robinpokorny/index-as-a-key-is-an-anti-pattern-e0349aece318) 会对组件性能产生消极影响，并且组件状态容易出现问题。 如果数组元素可能会发生变化，我们不推荐使用下标作为key。
 
@@ -457,7 +461,7 @@
 
 ## Refs
 
-  - 推荐用 ref callback 函数。 eslint: [`react/no-string-refs`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-string-refs.md)
+  - 推荐用 ref callback 函数。 eslint: [`react/no-string-refs`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-string-refs.md)
 
     ```jsx
     // bad
@@ -473,7 +477,7 @@
 
 ## Parentheses
 
-  - 当 JSX 标签有多行时，用圆括号包起来。eslint: [`react/jsx-wrap-multilines`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-wrap-multilines.md)
+  - 当 JSX 标签有多行时，用圆括号包起来。 eslint: [`react/jsx-wrap-multilines`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-wrap-multilines.md)
 
     ```jsx
     // bad
@@ -501,7 +505,7 @@
 
 ## Tags
 
-  - 当没有子元素时，最好用自闭合标签。 eslint: [`react/self-closing-comp`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/self-closing-comp.md)
+  - 当没有子元素时，最好用自闭合标签。 eslint: [`react/self-closing-comp`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/self-closing-comp.md)
 
     ```jsx
     // bad
@@ -511,7 +515,7 @@
     <Foo variant="stuff" />
     ```
 
-  - 如果你的组件有多行属性，用他的闭合标签单独作为结束行。 eslint: [`react/jsx-closing-bracket-location`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-closing-bracket-location.md)
+  - 如果你的组件有多行属性，用他的闭合标签单独作为结束行。 eslint: [`react/jsx-closing-bracket-location`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-closing-bracket-location.md)
 
     ```jsx
     // bad
@@ -545,7 +549,7 @@
     }
     ```
 
-  - 在构造函数里绑定事件处理函数。 eslint: [`react/jsx-no-bind`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-no-bind.md)
+  - 在构造函数里绑定事件处理函数。 eslint: [`react/jsx-no-bind`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-no-bind.md)
 
     > Why? render 函数中的绑定调用在每次 render 的时候都会创建一个新的函数。
 
@@ -602,7 +606,7 @@
     }
     ```
 
-  - 确保你的 `render` 函数有返回值。 eslint: [`react/require-render-return`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/require-render-return.md)
+  - 确保你的 `render` 函数有返回值。 eslint: [`react/require-render-return`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/require-render-return.md)
 
     ```jsx
     // bad
@@ -667,7 +671,7 @@
     export default Link;
     ```
 
-  - `React.createClass` 内部属性排序： eslint: [`react/sort-comp`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/sort-comp.md)
+  - `React.createClass` 内部属性排序： eslint: [`react/sort-comp`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/sort-comp.md)
 
   1. `displayName`
   1. `propTypes`
@@ -693,7 +697,7 @@
 
 ## `isMounted`
 
-  - 不要用 `isMounted`。 eslint: [`react/no-is-mounted`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-is-mounted.md)
+  - 不要用 `isMounted`。 eslint: [`react/no-is-mounted`](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-is-mounted.md)
 
   > Why? [`isMounted` 是反模式][anti-pattern]， 这个在 ES6 class 里不允许的，而且即将被官方废弃。
 
