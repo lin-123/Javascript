@@ -315,7 +315,7 @@
   - [3.7](#objects--prototype-builtins) 不要直接调用 `Object.prototype`上的方法，如 `hasOwnProperty`、`propertyIsEnumerable`、`isPrototypeOf`。eslint: [`no-prototype-builtins`](htt
 ps://eslint.org/docs/rules/no-prototype-builtins)
 
-    > 为什么？在一些有问题的对象上，这些方法可能会被屏蔽掉，如：`{ hasOwnProperty: false }` 或空对象 `Object.create(null)`
+    > 为什么？在一些有问题的对象上，这些方法可能会被屏蔽掉，如：`{ hasOwnProperty: false }` 或空对象 `Object.create(null)`。 在支持 ES2022 的现代浏览器中，或者被做过类似 <https://npmjs.com/object.hasown> 的兼容情况下， `Object.hasOwn` 也会被用作 `Object.prototype.hasOwnProperty.call` 的替代品。
 
     ```javascript
     // bad
@@ -324,9 +324,13 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
     // good
     console.log(Object.prototype.hasOwnProperty.call(object, key));
 
-    // best
+    // better
     const has = Object.prototype.hasOwnProperty; // 在模块作用域内做一次缓存。
     console.log(has.call(object, key));
+
+    // best
+    console.log(Object.hasOwn(object, key)); // 只能在支持 ES2022 的浏览器中使用
+
     /* or */
     import has from 'has'; // https://www.npmjs.com/package/has
     console.log(has(object, key));
@@ -708,15 +712,15 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
   <a name="7.1"></a>
   <a name="functions--declarations"></a>
 
-  - [7.1](#functions--declarations) 使用命名函数表达式而不是函数声明。eslint: [`func-style`](http://eslint.org/docs/rules/func-style)
+  - [7.1](#functions--declarations) 使用命名函数表达式而不是函数声明。eslint: [`func-style`](http://eslint.org/docs/rules/func-style) [`func-names`](https://eslint.org/docs/latest/rules/func-names)
 
     > 函数表达式： const func = function () {}
 
-    > 函数声明： function func () {}
+    > 函数声明： function func() {}
 
     > 为什么？函数声明会发生提升，这意味着在一个文件里函数很容易在其被定义之前就被引用了。这样伤害了代码可读性和可维护性。如果你发现一个函数又大又复杂，且这个函数妨碍了这个文件其他部分的理解性，你应当单独把这个函数提取成一个单独的模块。不管这个名字是不是由一个确定的变量推断出来的，别忘了给表达式清晰的命名（这在现代浏览器和类似 babel 编译器中很常见）。这消除了由匿名函数在错误调用栈产生的所有假设。 ([讨论](https://github.com/airbnb/javascript/issues/794))
 
-      > 译者注：这一段可能不是很好理解，简单来说就是使用函数声明会发生提升（即在函数被声明之前就可以使用），使用匿名函数会导致难以追踪错误。[这一段英文原文在这](https://github.com/airbnb/javascript#functions)。
+      > 译者注：这一段可能不是很好理解，简单来说就是使用函数声明会发生提升（即在函数被声明之前就可以使用）；使用匿名函数会导致报错难以定位错误。[常见错误范例](https://github.com/lin-123/javascript/issues/26) [这一段英文原文在这](https://github.com/airbnb/javascript#functions)。
 
     ```javascript
     // bad
@@ -1487,7 +1491,7 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
   <a name="10.5"></a>
   <a name="modules--no-mutable-exports"></a>
 
-  - [10.5](#modules--no-mutable-exports) 不要导出可变的东西。eslint: [`import/no-mutable-exports`](https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/no-mutable-exports.md)
+  - [10.5](#modules--no-mutable-exports) 不要导出可变的东西。eslint: [`import/no-mutable-exports`](https://github.com/import-js/eslint-plugin-import/blob/master/docs/rules/no-mutable-exports.md)
 
     > 为什么？变化通常都是需要避免，特别是当你要输出可变的绑定。虽然在某些场景下可能需要这种技术，但总的来说应该导出常量。
 
@@ -1504,7 +1508,7 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
   <a name="10.6"></a>
   <a name="modules--prefer-default-export"></a>
 
-  - [10.6](#modules--prefer-default-export) 在一个单一导出模块里，用 `export default` 更好。eslint: [`import/prefer-default-export`](https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/prefer-default-export.md)
+  - [10.6](#modules--prefer-default-export) 在一个单一导出模块里，用 `export default` 更好。eslint: [`import/prefer-default-export`](https://github.com/import-js/eslint-plugin-import/blob/master/docs/rules/prefer-default-export.md)
 
     > 为什么？鼓励使用更多文件，每个文件只导出一次，这样可读性和可维护性更好。
 
@@ -1519,7 +1523,7 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
   <a name="10.7"></a>
   <a name="modules--imports-first"></a>
 
-  - [10.7](#modules--imports-first) 把 `import` 放在其他所有语句之前。eslint: [`import/first`](https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/first.md)
+  - [10.7](#modules--imports-first) 把 `import` 放在其他所有语句之前。eslint: [`import/first`](https://github.com/import-js/eslint-plugin-import/blob/master/docs/rules/first.md)
 
     > 为什么？因为 `import` 会被提升到代码最前面运行，因此将他们放在最前面以防止发生意外行为。
 
@@ -1559,7 +1563,7 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
 
   <a name="10.9"></a>
   <a name="modules--no-webpack-loader-syntax"></a>
-  - [10.9](#modules--no-webpack-loader-syntax) 在 `import` 语句里不允许 Webpack loader 语法。eslint: [`import/no-webpack-loader-syntax`](https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/no-webpack-loader-syntax.md)
+  - [10.9](#modules--no-webpack-loader-syntax) 在 `import` 语句里不允许 Webpack loader 语法。eslint: [`import/no-webpack-loader-syntax`](https://github.com/import-js/eslint-plugin-import/blob/master/docs/rules/no-webpack-loader-syntax.md)
 
     > 为什么？一旦用 Webpack 语法在 import 里会把代码耦合到模块绑定器。最好是在 `webpack.config.js` 里写 webpack loader 语法
 
@@ -1576,7 +1580,7 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
   <a name="10.10"></a>
   <a name="modules--import-extensions"></a>
   - [10.10](#modules--import-extensions) import JavaScript文件不用包含扩展名
- eslint: [`import/extensions`](https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/extensions.md)
+ eslint: [`import/extensions`](https://github.com/import-js/eslint-plugin-import/blob/master/docs/rules/extensions.md)
     > 为什么? 使用扩展名重构不友好，而且让模块使用者去了解模块的实现细节是不合适的。
 
     ```javascript
@@ -1750,7 +1754,7 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
 
   <a name="12.3"></a>
   <a name="es2016-properties--exponentiation-operator"></a>
-  - [12.3](#es2016-properties--exponentiation-operator) 做幂运算时用幂操作符 `**` 。eslint: [`no-restricted-properties`](https://eslint.org/docs/rules/no-restricted-properties).
+  - [12.3](#es2016-properties--exponentiation-operator) 做幂运算时用幂操作符 `**` 。eslint: [`prefer-exponentiation-operator`](https://eslint.org/docs/rules/prefer-exponentiation-operator)。
 
     ```javascript
     // bad
@@ -2104,7 +2108,53 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
       }
     }
     ```
+  <a name="14.5"></a>
+  <a name="no-use-before-define"></a>
+  - [14.5](#no-use-before-define) 变量、类、函数都应该在使用前定义。 eslint: [`no-use-before-define`](https://eslint.org/docs/latest/rules/no-use-before-define)
 
+    > 为什么? 当变量、类或者函数在使用处之后定义，这让阅读者很难想到这个函数引用自何处。 对于读者在遇到某个事物之前，如果能知道这个事物的来源（不论是在文件中定义还是从别的模块引用），理解起来都会清晰很多。
+   ```javascript
+    // 不好的
+
+    // 变量 a 使用出现在定义之前
+    console.log(a); // 这样会导致 undefined，虽然变量声明被提升了， 但 a 初始化复制却还没执行
+    var a = 10;
+
+    // 函数 fun 使用出现在定义之前
+    fun();
+    function fun() {}
+
+    // 类 A 使用出现在定义之前
+    new A(); // 引用错误： 无法在 A 初始化之前访问它
+    class A {
+    }
+
+    // `let` 和 `const` 被提升， 但是他们没有初始化变量值
+    // 变量 a、 b 都被放在了 JavaScript 的暂时性死区 (Temporal Dead Zone， 指在变量被声明之前无法访问它的现象)。
+
+    console.log(a); // 引用错误: 无法在 a 初始化之前访问它
+    console.log(b); // 引用错误: 无法在 b 初始化之前访问它
+    let a = 10;
+    const b = 5;
+
+
+    // 好的
+
+    var a = 10;
+    console.log(a); // 10
+
+    function fun() {}
+    fun();
+
+    class A {
+    }
+    new A();
+
+    let a = 10;
+    const b = 5;
+    console.log(a); // 10
+    console.log(b); // 5
+    ```
   - 详情请见 [JavaScript Scoping & Hoisting](http://www.adequatelygood.com/2010/2/JavaScript-Scoping-and-Hoisting/) by [Ben Cherry](http://www.adequatelygood.com/).
 
 **[⬆ 返回顶部](#目录)**
@@ -2178,7 +2228,7 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
   <a name="15.4"></a>
   <a name="comparison--moreinfo"></a>
 
-  - [15.4](#comparison--moreinfo) 更多信息请见 Angus Croll 的 [Truth Equality and JavaScript](https://javascriptweblog.wordpress.com/2011/02/07/truth-equality-and-javascript/#more-2108)。
+  - [15.4](#comparison--moreinfo) 更多信息请见 Angus Croll 的 [Truth, Equality, and JavaScript](https://javascriptweblog.wordpress.com/2011/02/07/truth-equality-and-javascript/#more-2108)。
 
   <a name="15.5"></a>
   <a name="comparison--switch-blocks"></a>
@@ -2308,6 +2358,33 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
     // good
     const bar = a + (b / c) * d;
     ```
+  <a name="nullish-coalescing-operator"></a>
+  - [15.9](#nullish-coalescing-operator) (`??`) 是一个逻辑运算符， 当运算符左侧是 null 或 undefined 时返回右侧的值， 否则返回左侧值。
+
+    > 为什么? (`??`)这个运算符通过精确区分null/undefined和其他"falsy"值，从而增强了代码的清晰度和可预测性。
+
+    ```javascript
+    // 不好的
+    const value = 0 ?? 'default';
+    // returns 0, not 'default'
+
+    // 不好的
+    const value = '' ?? 'default';
+    // returns '', not 'default'
+
+    // 好的
+    const value = null ?? 'default';
+    // returns 'default'
+
+    // 好的
+    const user = {
+      name: 'John',
+      age: null
+    };
+    const age = user.age ?? 18;
+    // returns 18
+    ```
+
 
 **[⬆ back to top](#目录)**
 
@@ -3531,13 +3608,18 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
     > 为什么？JavaScript 没有私有属性或私有方法的概念。尽管前置下划线通常的概念上意味着私有，事实上，这些属性是完全公有的，因此这部分也是你的 API 的内容。这一概念可能会导致开发者误以为更改这个不会导致崩溃或者不需要测试。如果你想要什么东西变成私有，那就不要让它在这里出现。
 
     ```javascript
-    // bad
+    // 不好的
     this.__firstName__ = 'Panda';
     this.firstName_ = 'Panda';
     this._firstName = 'Panda';
 
-    // good
+    // 好的
     this.firstName = 'Panda';
+
+    // 好的， 在支持 WeakMaps 环境中可用
+    // 见 https://compat-table.github.io/compat-table/es6/#test-WeakMap
+    const firstNames = new WeakMap();
+    firstNames.set(this, 'Panda');
     ```
 
   <a name="23.5"></a>
@@ -3904,7 +3986,7 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
 
   <a name="27.1"></a>
   <a name="es5-compat--kangax"></a>
-  - [27.1](#es5-compat--kangax) 参考 [Kangax](https://twitter.com/kangax/) 的 ES5 [兼容性列表](https://kangax.github.io/es5-compat-table/).
+  - [27.1](#es5-compat--kangax) 参考 [Kangax](https://twitter.com/kangax/) 的 ES5 [兼容性列表](https://compat-table.github.io/compat-table/es6/).
 
 **[⬆ 返回顶部](#目录)**
 

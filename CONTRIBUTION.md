@@ -7,9 +7,12 @@
 ### 文档更新
 > master 用于跟踪upstream
 
-1. 对比文件差异 `git diff master upstream/master README.md`
-3. `git checkout cn`，修改 cn 分支下 README.md
-4. master 节点同步到 upstream 最新节点； `git checkout master && git rebase upstream/master`
+1. git fetch upstream
+1. 对比文件差异
+   1. `git diff master upstream/master README.md`
+   2. `git diff master upstream/master react/README.md`
+2. `git checkout cn`，修改 cn 分支下 README.md
+3. master 节点同步到 upstream 最新节点； `git checkout master && git rebase upstream/master`
 
 ### 文档发布
 `sh scripts/page.sh` 将 Markdown 文档发布到 gp-pages 分支
