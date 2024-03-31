@@ -1,0 +1,22 @@
+name: Deploy static content to Pages
+
+on:
+  push:
+    branches: [ "cn" ]
+  
+jobs:
+  cache-and-install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup docs
+        run: mkdir dist && cp -r README.md react docs-dist 
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs-dist  # 这里是你的静态网站构建后的目录，需要根据你的项目调整
