@@ -5,7 +5,7 @@ on:
     branches: [ "cn" ]
 
 jobs:
-  cache-and-install:
+  deploy-to-gh-pages:
     runs-on: ubuntu-latest
 
     steps:
@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup docs
-        run: mkdir docs-dist && cp -r README.md react docs-dist
+        run: mkdir docs-dist && cp -r README.md docs-dist
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
