@@ -1,5 +1,5 @@
 # gitignore
-
+docs-dist
 node_modules
 
 # Only apps should have lockfiles
