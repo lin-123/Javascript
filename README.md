@@ -2113,7 +2113,8 @@ ps://eslint.org/docs/rules/no-prototype-builtins)
   - [14.5](#no-use-before-define) 变量、类、函数都应该在使用前定义。 eslint: [`no-use-before-define`](https://eslint.org/docs/latest/rules/no-use-before-define)
 
     > 为什么? 当变量、类或者函数在使用处之后定义，这让阅读者很难想到这个函数引用自何处。 对于读者在遇到某个事物之前，如果能知道这个事物的来源（不论是在文件中定义还是从别的模块引用），理解起来都会清晰很多。
-   ```javascript
+
+    ```javascript
     // 不好的
 
     // 变量 a 使用出现在定义之前
